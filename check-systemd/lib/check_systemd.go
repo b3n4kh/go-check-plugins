@@ -84,7 +84,7 @@ func run(args []string) *checkers.Checker {
 	}
 	count := int64(len(resultStates))
 	result = getStatus(count)
-	msg += fmt.Sprintf("\n%q", resultStates)
+	msg += fmt.Sprintf("%q", resultStates)
 	return checkers.NewChecker(result, msg)
 }
 
