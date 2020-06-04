@@ -14,8 +14,8 @@ import (
 
 // https://github.com/sensu-plugins/sensu-plugins-process-checks
 var opts struct {
-	WarningOver   *int64   `short:"w" long:"warning-over" value-name:"N" description:"Trigger a warning if over a number"`
-	CritOver      *int64   `short:"c" long:"critical-over" value-name:"N" description:"Trigger a critical if over a number"`
+	WarningOver   *uint    `short:"w" long:"warning-over" default:"0" description:"Trigger a warning if over a number"`
+	CritOver      *uint    `short:"c" long:"critical-over" default:"1" description:"Trigger a critical if over a number"`
 	CmdPatterns   []string `short:"p" long:"pattern" value-name:"PATTERN" description:"Match a command against these patterns"`
 	CmdExcludePat string   `short:"x" long:"exclude-pattern" value-name:"PATTERN" description:"Don't match against a pattern to prevent false positives"`
 }
@@ -82,7 +82,7 @@ func run(args []string) *checkers.Checker {
 			}
 		}
 	}
-	count := int64(len(resultStates))
+	count := uint(len(resultStates))
 	result = getStatus(count)
 	msg += fmt.Sprintf("%q", resultStates)
 	return checkers.NewChecker(result, msg)
@@ -93,7 +93,7 @@ func matchState(state sysState, cmdPatRegexp *regexp.Regexp, cmdExcludePatRegexp
 		(opts.CmdExcludePat == "" || !cmdExcludePatRegexp.MatchString(state.unit))
 }
 
-func getStatus(count int64) checkers.Status {
+func getStatus(count uint) checkers.Status {
 	if opts.CritOver != nil && count > *opts.CritOver {
 		return checkers.CRITICAL
 	}
